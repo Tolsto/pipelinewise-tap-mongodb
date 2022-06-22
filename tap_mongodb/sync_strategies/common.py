@@ -17,7 +17,7 @@ from tap_mongodb.errors import MongoInvalidDateTimeException, SyncException, Uns
 
 SDC_DELETED_AT = "_sdc_deleted_at"
 INCLUDE_SCHEMAS_IN_DESTINATION_STREAM_NAME = False
-UPDATE_BOOKMARK_PERIOD = 1000
+UPDATE_BOOKMARK_PERIOD = 10000
 COUNTS = {}
 TIMES = {}
 SCHEMA_COUNT = {}
