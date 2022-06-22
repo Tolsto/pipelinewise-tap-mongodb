@@ -1,4 +1,5 @@
 import copy
+from datetime import datetime, timedelta
 import time
 import singer
 
@@ -97,6 +98,8 @@ def sync_database(database: Database,
 
     stream_ids = set(streams_to_sync.keys())
 
+    started_sync_at = datetime.now().astimezone()
+
     # Init a cursor to listen for changes from the last saved resume token
     # if there are no changes after MAX_AWAIT_TIME_MS, then we'll exit
     with database.watch(
@@ -174,6 +177,12 @@ def sync_database(database: Database,
 
             # update the states of all streams
             state = update_bookmarks(state, stream_ids, resume_token)
+
+            if change['clusterTime'].as_datetime() > (started_sync_at + timedelta(seconds=60)):
+                LOGGER.info('`Cut-off reached, updating bookmark and exiting...')
+                singer.write_message(singer.StateMessage(value=copy.deepcopy(state)))
+
+                break
 
             # flush buffer if it has filled up or flush and write state every UPDATE_BOOKMARK_PERIOD messages
             if sum(len(stream_buffer) for stream_buffer in update_buffer.values()) >= update_buffer_size or \
