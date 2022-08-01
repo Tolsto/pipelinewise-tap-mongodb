@@ -105,7 +105,7 @@ def sync_database(database: Database,
     with database.watch(
             [{'$match': {
                 '$or': [
-                    {'operationType': 'insert'}, {'operationType': 'update'}, {'operationType': 'delete'}
+                    {'operationType': 'insert'}, {'operationType': 'update'}
                 ],
                 '$and': [
                     # watch collections of selected streams
